@@ -1,0 +1,15 @@
+﻿# .NET
+bin/
+obj/
+.vs/
+*.user
+appsettings.Development.json
+
+# Expo / Node
+node_modules/
+.expo/
+dist/
+
+# Lain-lain
+.env
+wwwroot/uploads/
