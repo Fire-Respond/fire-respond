@@ -1,7 +1,13 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using FireRespond.Data;
 using FireRespond.Services;
 using Microsoft.EntityFrameworkCore;
+
+// Pakai format angka internasional (titik desimal). Tanpa ini, di laptop berbahasa Indonesia
+// koordinat "-2.25" dari form mobile bisa terbaca sebagai -225.
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 

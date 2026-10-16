@@ -1,31 +1,19 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using FireRespond.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FireRespond.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    // Dashboard BPBD. Cek login dilakukan di sisi browser (token dari /api/auth/login).
+    public IActionResult Index() => View();
 
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
+    public IActionResult Login() => View();
 
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+    public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+        => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 }

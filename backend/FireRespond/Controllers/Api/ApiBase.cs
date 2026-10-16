@@ -28,6 +28,10 @@ public abstract class ApiBase : ControllerBase
         => saya.Role == RolePengguna.Admin || t.ReguId == saya.ReguId;
 
     protected IActionResult Gagal(string pesan) => BadRequest(new { pesan });
+
+    // Jangan pakai Forbid(): tanpa skema autentikasi ASP.NET, Forbid() bikin error 500.
+    protected IActionResult Dilarang(string pesan = "Tiket ini bukan milik regu Anda.")
+        => StatusCode(403, new { pesan });
 }
 
 /// Bentuk ringkas tiket yang dikirim ke mobile dan web.

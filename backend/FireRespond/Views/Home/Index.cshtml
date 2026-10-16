@@ -1,8 +1,88 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    Layout = null;
 }
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fire Respond · Pusat kendali BPBD</title>
+    <link rel="icon" href="/img/fr-logo.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/img/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo-badge"><img src="/img/fr-logo.svg" alt="" width="24" height="24"></span>
+            <div>
+                <strong>Fire Respond</strong>
+                <span>Pusat kendali BPBD</span>
+            </div>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        <div class="replay">
+            <label for="tgl-replay">Putar ulang data satelit</label>
+            <input type="date" id="tgl-replay" value="2026-08-21">
+            <button id="btn-replay">Putar</button>
+            <button id="btn-tarik" class="ghost">Tarik data terbaru</button>
+        </div>
+
+        <div class="user">
+            <span id="live" class="live" role="status"><i aria-hidden="true"></i><span id="live-teks">Menghubungkan…</span></span>
+            <span id="jam" class="jam"></span>
+            <span id="nama-admin" class="nama"></span>
+            <button id="btn-keluar" class="ghost">Keluar</button>
+        </div>
+    </header>
+
+    <section class="kpi" aria-label="Ringkasan">
+        <div class="kpi-item" id="kotak-baru"><span class="label">Belum direspons</span><strong id="kpi-baru">–</strong><span class="sub">eskalasi otomatis setelah 30 mnt</span></div>
+        <div class="kpi-item" id="kotak-eskalasi"><span class="label">Butuh bantuan BPBD</span><strong id="kpi-eskalasi">–</strong><span class="sub" id="sub-eskalasi">eskalasi yang belum dibantu</span></div>
+        <div class="kpi-item"><span class="label">Tiket aktif</span><strong id="kpi-aktif">–</strong><span class="sub" id="sub-aktif">&nbsp;</span></div>
+        <div class="kpi-item"><span class="label">Rata-rata respons regu</span><strong id="kpi-respons">–</strong><span class="sub">batas 30 mnt</span></div>
+        <div class="kpi-item"><span class="label">Alarm palsu</span><strong id="kpi-palsu">–</strong><span class="sub">dari tiket yang sudah dicek</span></div>
+        <div class="kpi-item"><span class="label">Luas terbakar</span><strong id="kpi-luas">–</strong><span class="sub">total laporan regu</span></div>
+    </section>
+
+    <main class="isi">
+        <div class="peta-wrap">
+            <div id="peta" aria-label="Peta titik panas dan tiket"></div>
+            <div class="legenda">
+                <span><i class="titik" style="background:#ff3b1f"></i>Titik panas, keyakinan tinggi</span>
+                <span><i class="titik" style="background:#ffa21c"></i>keyakinan sedang</span>
+                <span><i class="bulat" style="background:var(--st-baru)"></i>Baru</span>
+                <span><i class="bulat" style="background:var(--st-jalan)"></i>Menuju / dicek</span>
+                <span><i class="bulat" style="background:var(--st-tangani)"></i>Penanganan</span>
+                <span><i class="bulat" style="background:var(--st-pantau)"></i>Pemantauan</span>
+                <span><i class="bulat eskalasi"></i>Minta bantuan</span>
+            </div>
+        </div>
+
+        <aside class="panel">
+            <div id="panel-daftar">
+                <div class="panel-head">
+                    <div class="baris"><h2>Antrean tiket</h2></div>
+                    <div class="filter" role="group" aria-label="Saring tiket">
+                        <button class="chip" data-filter="semua" aria-pressed="true">Semua<b id="n-semua"></b></button>
+                        <button class="chip" data-filter="aksi" aria-pressed="false">Perlu tindakan<b id="n-aksi"></b></button>
+                        <button class="chip" data-filter="tangani" aria-pressed="false">Penanganan<b id="n-tangani"></b></button>
+                        <button class="chip" data-filter="pantau" aria-pressed="false">Pemantauan<b id="n-pantau"></b></button>
+                    </div>
+                </div>
+                <div id="daftar" class="daftar"></div>
+            </div>
+            <div id="panel-detail" hidden></div>
+        </aside>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

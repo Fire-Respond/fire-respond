@@ -56,7 +56,7 @@ public class TiketController : ApiBase
             .Include(x => x.Update).ThenInclude(u => u.Pengguna)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (t is null) return NotFound();
-        if (!BolehAkses(saya, t)) return Forbid();
+        if (!BolehAkses(saya, t)) return Dilarang();
 
         return Ok(new
         {
@@ -81,7 +81,7 @@ public class TiketController : ApiBase
 
         var t = await DenganRelasi().FirstOrDefaultAsync(x => x.Id == id);
         if (t is null) return NotFound();
-        if (!BolehAkses(saya, t)) return Forbid();
+        if (!BolehAkses(saya, t)) return Dilarang();
         if (t.Status != StatusTiket.Baru) return Gagal("Tiket ini sudah diterima.");
 
         var now = DateTime.UtcNow;
@@ -119,7 +119,7 @@ public class TiketController : ApiBase
 
         var t = await DenganRelasi().FirstOrDefaultAsync(x => x.Id == id);
         if (t is null) return NotFound();
-        if (!BolehAkses(saya, t)) return Forbid();
+        if (!BolehAkses(saya, t)) return Dilarang();
 
         if (!Transisi.TryGetValue(t.Status, out var boleh) || !boleh.Contains(f.Status))
             return Gagal($"Status {t.Status} tidak bisa diubah ke {f.Status}.");
@@ -193,7 +193,7 @@ public class TiketController : ApiBase
 
         var t = await DenganRelasi().FirstOrDefaultAsync(x => x.Id == id);
         if (t is null) return NotFound();
-        if (!BolehAkses(saya, t)) return Forbid();
+        if (!BolehAkses(saya, t)) return Dilarang();
         if (t.Status is StatusTiket.Selesai or StatusTiket.AlarmPalsu) return Gagal("Tiket sudah ditutup.");
 
         var now = DateTime.UtcNow;
@@ -215,7 +215,7 @@ public class TiketController : ApiBase
     {
         var saya = await SayaAsync();
         if (saya is null) return Unauthorized();
-        if (saya.Role != RolePengguna.Admin) return Forbid();
+        if (saya.Role != RolePengguna.Admin) return Dilarang("Hanya admin BPBD yang bisa menandai bantuan.");
 
         var t = await DenganRelasi().FirstOrDefaultAsync(x => x.Id == id);
         if (t is null) return NotFound();

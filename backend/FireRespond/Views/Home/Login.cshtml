@@ -1,0 +1,53 @@
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Masuk · Fire Respond</title>
+    <link rel="icon" href="/img/fr-logo.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/img/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <div class="halaman-login">
+        <section class="login-sisi">
+            <span class="radius" aria-hidden="true"></span>
+            <div class="brand">
+                <span class="logo-badge"><img src="/img/fr-logo.svg" alt="" width="24" height="24"></span>
+                <div>
+                    <strong>Fire Respond</strong>
+                    <span>Pusat kendali BPBD</span>
+                </div>
+            </div>
+            <div>
+                <h1>Setiap titik panas sampai ke regu terdekat.</h1>
+                <p>Pantau titik panas satelit, tiket regu Masyarakat Peduli Api, dan permintaan bantuan dari lapangan dalam satu layar.</p>
+            </div>
+        </section>
+
+        <div class="login-form-wrap">
+            <main class="kartu-login">
+                <h2>Masuk</h2>
+                <p class="sub">Khusus akun admin BPBD. Regu MPA memakai aplikasi di HP.</p>
+                <form id="form-login" novalidate>
+                    <label for="username">Username</label>
+                    <input id="username" name="username" autocomplete="username" value="admin">
+
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password">
+
+                    <p id="pesan-error" class="error" role="alert" hidden></p>
+                    <button type="submit" id="btn-masuk">Masuk</button>
+                </form>
+            </main>
+        </div>
+    </div>
+    <script src="/js/login.js"></script>
+</body>
+</html>
