@@ -10,7 +10,7 @@ Subtema: *Masyarakat sekitar hutan dan lahan gambut yang terdampak kebakaran dan
 | | Link | Akun |
 |---|---|---|
 | Dashboard BPBD (web) | https://fire-respond-production.up.railway.app | `admin` / `firerespond123` |
-| Aplikasi regu MPA (Android) | _link APK menyusul_ | `regu_a` / `firerespond123` |
+| Aplikasi regu MPA (Android) | https://github.com/Fire-Respond/fire-respond/releases/tag/v1.0 | `regu_a` / `firerespond123` |
 
 Data titik panas di demo memakai **mode replay** (data satelit asli NASA FIRMS tanggal 21 Agustus 2026), karena saat ini di luar puncak musim kebakaran.
 
