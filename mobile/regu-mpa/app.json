@@ -10,13 +10,24 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.firerespond.regu",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "TIDAK-DIPAKAI-PETA-MEMAKAI-TILE-ESRI"
+        }
       }
     },
+    "plugins": [
+      ["expo-location", { "locationWhenInUsePermission": "Lokasi dipakai untuk mencatat posisi regu saat melapor." }],
+      ["expo-image-picker", { "cameraPermission": "Kamera dipakai untuk memotret kondisi api di lapangan." }],
+      "expo-notifications"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }
