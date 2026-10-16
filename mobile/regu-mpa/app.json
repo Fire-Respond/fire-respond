@@ -21,15 +21,35 @@
         "googleMaps": {
           "apiKey": "TIDAK-DIPAKAI-PETA-MEMAKAI-TILE-ESRI"
         }
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
-      ["expo-location", { "locationWhenInUsePermission": "Lokasi dipakai untuk mencatat posisi regu saat melapor." }],
-      ["expo-image-picker", { "cameraPermission": "Kamera dipakai untuk memotret kondisi api di lapangan." }],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Lokasi dipakai untuk mencatat posisi regu saat melapor."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Kamera dipakai untuk memotret kondisi api di lapangan."
+        }
+      ],
       "expo-notifications"
     ],
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6416843e-3067-4380-b74a-2b86b5dc951e"
+      }
     }
   }
 }

@@ -5,6 +5,15 @@ Sistem peringatan dini dan penanganan kebakaran hutan dan lahan (karhutla) yang 
 **JOINTS UGM 2026 · Hackathon · Tema Sustainability**
 Subtema: *Masyarakat sekitar hutan dan lahan gambut yang terdampak kebakaran dan deforestasi, sehingga sulit memantau titik api dan alih fungsi lahan sejak dini.*
 
+## Coba langsung
+
+| | Link | Akun |
+|---|---|---|
+| Dashboard BPBD (web) | https://fire-respond-production.up.railway.app | `admin` / `firerespond123` |
+| Aplikasi regu MPA (Android) | _link APK menyusul_ | `regu_a` / `firerespond123` |
+
+Data titik panas di demo memakai **mode replay** (data satelit asli NASA FIRMS tanggal 21 Agustus 2026), karena saat ini di luar puncak musim kebakaran.
+
 ---
 
 ## Masalah
@@ -134,7 +143,6 @@ fire-respond/
 - .NET SDK 9
 - Node.js 20 atau lebih baru
 - Akun [Supabase](https://supabase.com) (gratis) dan MAP_KEY [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/api/map_key/) (gratis)
-- [ngrok](https://ngrok.com) supaya HP bisa mengakses backend di laptop
 - Aplikasi **Expo Go** versi terbaru di HP Android
 
 ### 1. Database (Supabase)
@@ -187,13 +195,16 @@ curl -X POST "http://localhost:5139/api/admin/firms/replay?tanggal=2026-08-21"
 
 ### 3. Aplikasi mobile
 ```bash
-ngrok http 5139                 # terminal terpisah, salin URL https-nya
 cd mobile/regu-mpa
 npm install
 npx expo start                  # scan QR dengan Expo Go
 ```
 
-Di layar login, buka **Pengaturan server**, tempel URL ngrok, lalu masuk dengan akun regu.
+Secara bawaan aplikasi terhubung ke server demo di Railway (`src/config.js`). Untuk memakai backend lokal, jalankan backend dengan `dotnet run --urls http://0.0.0.0:5139`, lalu di layar login **tekan lama logo** untuk membuka pengaturan server dan isi `http://<IP-laptop>:5139` (HP dan laptop di WiFi yang sama).
+
+### 4. Deploy
+- **Backend + dashboard**: Railway, dari `backend/FireRespond/Dockerfile` (Root Directory `backend/FireRespond`). Rahasia diisi lewat environment variable `ConnectionStrings__Default` dan `Firms__MapKey`, tidak pernah di repo.
+- **APK Android**: `npx eas-cli build -p android --profile preview` di folder `mobile/regu-mpa`.
 
 ### Akun demo
 
