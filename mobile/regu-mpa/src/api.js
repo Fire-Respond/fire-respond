@@ -62,7 +62,8 @@ async function request(path, { method = 'GET', json, body, abaikan401 = false } 
 export async function muatSesi() {
   try {
     const url = await AsyncStorage.getItem(KUNCI_URL);
-    if (url) baseUrl = url;
+    // URL lama yang tersimpan (misalnya IP laptop) diabaikan, kecuali memang diisi dari pengaturan server
+    baseUrl = url || DEFAULT_API_URL;
     const raw = await AsyncStorage.getItem(KUNCI_SESI);
     if (!raw) return null;
     const sesi = JSON.parse(raw);
@@ -74,7 +75,8 @@ export async function muatSesi() {
 }
 
 export async function login(username, password, url) {
-  baseUrl = rapikanUrl(url) || DEFAULT_API_URL;
+  const custom = rapikanUrl(url);
+  baseUrl = custom || DEFAULT_API_URL;
   const data = await request('/api/auth/login', {
     method: 'POST', json: { username, password }, abaikan401: true,
   });
@@ -84,7 +86,8 @@ export async function login(username, password, url) {
   token = data.token;
   const sesi = { token: data.token, nama: data.nama, reguNama: data.reguNama };
   try {
-    await AsyncStorage.setItem(KUNCI_URL, baseUrl);
+    if (custom) await AsyncStorage.setItem(KUNCI_URL, custom);
+    else await AsyncStorage.removeItem(KUNCI_URL);
     await AsyncStorage.setItem(KUNCI_SESI, JSON.stringify(sesi));
   } catch { /* tetap lanjut walau gagal simpan */ }
   return sesi;

@@ -20,7 +20,7 @@ export default function LoginScreen({ onMasuk }) {
       setError('Isi username dan password dulu.');
       return;
     }
-    if (!/^https?:\/\/\S+$/.test(url.trim())) {
+    if (lihatServer && !/^https?:\/\/\S+$/.test(url.trim())) {
       setError('URL server tidak valid. Contoh: https://abcd.ngrok-free.app');
       setLihatServer(true);
       return;
@@ -28,7 +28,8 @@ export default function LoginScreen({ onMasuk }) {
     setSibuk(true);
     setError(null);
     try {
-      onMasuk(await api.login(username.trim(), password, url));
+      // Tanpa membuka pengaturan server, aplikasi selalu memakai server Railway
+      onMasuk(await api.login(username.trim(), password, lihatServer ? url : null));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -48,9 +49,10 @@ export default function LoginScreen({ onMasuk }) {
         keyboardDismissMode="on-drag"
         automaticallyAdjustKeyboardInsets
       >
-        <View style={s.logoBadge}>
+        {/* Tekan lama logo untuk membuka pengaturan server (khusus pengembang) */}
+        <Pressable onLongPress={() => setLihatServer((v) => !v)} delayLongPress={800} style={s.logoBadge}>
           <Image source={require('../../assets/logo.png')} style={s.logo} accessibilityLabel="Logo Fire Respond" />
-        </View>
+        </Pressable>
         <Text style={s.judul}>Fire Respond</Text>
         <Text style={s.sub}>Aplikasi regu Masyarakat Peduli Api. Terima alert titik panas dan laporkan kondisi lapangan.</Text>
 
@@ -79,9 +81,6 @@ export default function LoginScreen({ onMasuk }) {
             </Pressable>
           </View>
 
-          <Pressable onPress={() => setLihatServer((v) => !v)} accessibilityRole="button">
-            <Text style={s.linkServer}>{lihatServer ? 'Sembunyikan pengaturan server' : 'Pengaturan server'}</Text>
-          </Pressable>
           {lihatServer && (
             <>
               <Text style={s.label}>URL server</Text>
