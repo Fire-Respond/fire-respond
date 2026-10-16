@@ -6,46 +6,159 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk · Fire Respond</title>
+    <title>Masuk · FireRespond BPBD</title>
     <link rel="icon" href="/img/fr-logo.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/img/favicon.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/dashboard.css?v=2">
+    <style>
+        /* Paksa kolom input nama pengguna dan kata sandi menjadi putih bersih */
+        .input-pill,
+        .input-pill input,
+        .input-pill input[type="text"],
+        .input-pill input[type="password"] {
+            background-color: #FFFFFF !important;
+            background: #FFFFFF !important;
+            color: #0F172A !important;
+            color-scheme: light !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+        }
+
+        .input-pill {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+            border: 2px solid transparent !important;
+        }
+
+        .input-pill:focus-within {
+            border-color: #FF5722 !important;
+            box-shadow: 0 8px 28px rgba(255, 87, 34, 0.28) !important;
+        }
+
+        /* Hilangkan warna abu-abu/biru dari autofill browser (Chrome/Edge) */
+        .input-pill input:-webkit-autofill,
+        .input-pill input:-webkit-autofill:hover,
+        .input-pill input:-webkit-autofill:focus,
+        .input-pill input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+            box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+            -webkit-text-fill-color: #0F172A !important;
+            color: #0F172A !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Hilangkan ikon mata bawaan Edge agar tidak dobel dengan tombol mata kustom */
+        .input-pill input::-ms-reveal,
+        .input-pill input::-ms-clear {
+            display: none !important;
+        }
+
+        /* Warna dan ukuran judul FireRespond di sisi kiri */
+        .brand-hero-content h1,
+        .brand-hero-title {
+            font-size: 44px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.035em !important;
+            margin: 0 0 10px !important;
+            line-height: 1.1 !important;
+        }
+
+        .text-orange,
+        .brand-hero-content h1.text-orange,
+        .brand-hero-title .text-orange {
+            color: #FF5722 !important;
+        }
+    </style>
 </head>
-<body>
-    <div class="halaman-login">
-        <section class="login-sisi">
-            <span class="radius" aria-hidden="true"></span>
-            <div class="brand">
-                <span class="logo-badge"><img src="/img/fr-logo.svg" alt="" width="24" height="24"></span>
-                <div>
-                    <strong>Fire Respond</strong>
-                    <span>Pusat kendali BPBD</span>
+<body class="body-login">
+    <div class="login-wrapper">
+        <!-- Pembatas Lekukan SVG Organik Sesuai Referensi -->
+        <svg class="login-curve-svg" viewBox="0 0 950 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+                <linearGradient id="radarNavyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0F172A" />
+                    <stop offset="35%" stop-color="#153448" />
+                    <stop offset="70%" stop-color="#1A4D62" />
+                    <stop offset="100%" stop-color="#20677B" />
+                </linearGradient>
+            </defs>
+            <path d="M 950 0 L 950 900 L 520 900 C 620 500, 370 400, 470 0 Z" fill="url(#radarNavyGrad)" />
+        </svg>
+
+        <!-- Bagian Kiri: Identitas Brand & Logo -->
+        <div class="login-left-panel">
+            <div class="brand-hero-content">
+                <div class="brand-badge-box">
+                    <img src="/img/fr-logo.svg" alt="Logo FireRespond" class="brand-badge-img">
+                </div>
+                <h1 class="text-orange">FireRespond</h1>
+                <p class="brand-hero-tagline">Sistem Peringatan Dini dan Penugasan Regu Desa untuk
+                    Kebakaran Lahan Gambut
+                </p>
+            </div>
+        </div>
+
+        <!-- Bagian Kanan: Form Masuk (Sign In) -->
+        <div class="login-right-panel">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Masuk ke akun Anda</h2>
+                    <p>Pusat kendali BPBD untuk pemantauan titik panas dan koordinasi regu darurat.</p>
+                </div>
+
+                <form id="form-login" novalidate>
+                    <div class="input-group">
+                        <label for="username">Nama Pengguna</label>
+                        <div class="input-pill">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </span>
+                            <input id="username" name="username" type="text" autocomplete="username" placeholder="Masukkan nama pengguna" value="admin" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Kata Sandi</label>
+                        <div class="input-pill">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+                            <button type="button" id="btn-toggle-pw" class="btn-eye" aria-label="Tampilkan kata sandi">
+                                <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <svg class="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="pesan-error" class="alert-error" role="alert" hidden></div>
+
+                    <button type="submit" id="btn-masuk" class="btn-submit">
+                        <span class="btn-text">Masuk</span>
+                        <span class="btn-spinner" style="display:none;" aria-hidden="true"></span>
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    <p>Khusus akun administrator <strong>BPBD</strong>. Anggota Regu MPA silakan mengakses melalui aplikasi seluler.</p>
                 </div>
             </div>
-            <div>
-                <h1>Setiap titik panas sampai ke regu terdekat.</h1>
-                <p>Pantau titik panas satelit, tiket regu Masyarakat Peduli Api, dan permintaan bantuan dari lapangan dalam satu layar.</p>
-            </div>
-        </section>
-
-        <div class="login-form-wrap">
-            <main class="kartu-login">
-                <h2>Masuk</h2>
-                <p class="sub">Khusus akun admin BPBD. Regu MPA memakai aplikasi di HP.</p>
-                <form id="form-login" novalidate>
-                    <label for="username">Username</label>
-                    <input id="username" name="username" autocomplete="username" value="admin">
-
-                    <label for="password">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password">
-
-                    <p id="pesan-error" class="error" role="alert" hidden></p>
-                    <button type="submit" id="btn-masuk">Masuk</button>
-                </form>
-            </main>
         </div>
     </div>
     <script src="/js/login.js"></script>

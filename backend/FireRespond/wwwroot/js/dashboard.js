@@ -7,16 +7,16 @@
     const BATAS_JARAK_FOTO_KM = 2;        // foto lebih jauh dari ini ditandai perlu dicek
 
     const STATUS = {
-        Baru:         { label: 'Baru',          warna: '#D63B1F' },
-        MenujuLokasi: { label: 'Menuju lokasi', warna: '#D98A12' },
-        Dicek:        { label: 'Dicek',         warna: '#A88400' },
-        Penanganan:   { label: 'Penanganan',    warna: '#E2520F' },
-        Padam:        { label: 'Padam',         warna: '#2E7D4F' },
-        Pemantauan:   { label: 'Pemantauan',    warna: '#2C6E9B' },
-        Selesai:      { label: 'Selesai',       warna: '#8C968F' },
-        AlarmPalsu:   { label: 'Alarm palsu',   warna: '#8C968F' }
+        Baru:         { label: 'Baru',          warna: '#EF4444', badgeClass: 'badge-baru' },
+        MenujuLokasi: { label: 'Menuju lokasi', warna: '#F97316', badgeClass: 'badge-jalan' },
+        Dicek:        { label: 'Dicek',         warna: '#F97316', badgeClass: 'badge-jalan' },
+        Penanganan:   { label: 'Penanganan',    warna: '#EF4444', badgeClass: 'badge-tangani' },
+        Padam:        { label: 'Padam',         warna: '#2563EB', badgeClass: 'badge-padam' },
+        Pemantauan:   { label: 'Pemantauan',    warna: '#2563EB', badgeClass: 'badge-pantau' },
+        Selesai:      { label: 'Selesai',       warna: '#10B981', badgeClass: 'badge-selesai' },
+        AlarmPalsu:   { label: 'Alarm palsu',   warna: '#64748B', badgeClass: 'badge-palsu' }
     };
-    const statusInfo = s => STATUS[s] || { label: s, warna: '#8C968F' };
+    const statusInfo = s => STATUS[s] || { label: s, warna: '#64748B', badgeClass: 'badge-palsu' };
 
     // Urutan langkah untuk penanda progres di detail tiket
     const LANGKAH = [
@@ -76,6 +76,7 @@
     let timerToast;
     function toast(teks, jenis = '') {
         const el = $('toast');
+        if (!el) return;
         el.textContent = teks;
         el.className = 'toast tampil' + (jenis ? ' ' + jenis : '');
         clearTimeout(timerToast);
@@ -96,24 +97,43 @@
         return res.json();
     }
 
-    // ---------- Peta ----------
+    // ---------- Tema Tampilan (Mode Gelap / Terang) ----------
+    let temaAktif = localStorage.getItem('fr_theme') || 'dark';
+
+    function terapkanTema(tema) {
+        temaAktif = tema;
+        document.documentElement.setAttribute('data-theme', tema);
+        localStorage.setItem('fr_theme', tema);
+    }
+
+    // ---------- Peta Leaflet ----------
     const peta = L.map('peta', { preferCanvas: true, zoomControl: true }).setView([-2.8, 113.5], 7);
+
+    const dasarJalan = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
     const dasarSatelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 18, attribution: 'Citra &copy; Esri'
     });
-    const dasarJalan = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18, attribution: '&copy; OpenStreetMap'
-    });
+
     dasarJalan.addTo(peta);
 
     const lapisTitik = L.layerGroup().addTo(peta);
     const lapisDesa = L.layerGroup().addTo(peta);
     const lapisTiket = L.layerGroup().addTo(peta);
+
     L.control.layers(
-        { 'Peta jalan': dasarJalan, 'Citra satelit': dasarSatelit },
+        { 'Peta Jalan': dasarJalan, 'Citra Satelit': dasarSatelit },
         { 'Titik panas': lapisTitik, 'Wilayah regu': lapisDesa, 'Tiket': lapisTiket },
         { collapsed: true }
     ).addTo(peta);
+
+    peta.on('baselayerchange', (e) => {
+        const wrap = $('peta')?.closest('.peta-wrap');
+        if (wrap) {
+            wrap.classList.toggle('layer-satelit', e.name === 'Citra Satelit');
+        }
+    });
 
     let penandaTiket = {};
     let sudahDiposisikan = false;
@@ -135,7 +155,7 @@
         lapisTitik.clearLayers();
         data.titikPanas.forEach(t => {
             L.circleMarker([t.lat, t.lon], {
-                radius: 3, stroke: false, fillOpacity: .9,
+                radius: 3.5, stroke: false, fillOpacity: .92,
                 fillColor: t.confidence === 'h' ? '#ff3b1f' : '#ffa21c'
             }).bindTooltip(`Titik panas, FRP ${angka(t.frp)} MW<br>${waktu(t.waktuDeteksiUtc)}`).addTo(lapisTitik);
         });
@@ -143,7 +163,7 @@
         lapisDesa.clearLayers();
         data.desa.forEach(d => {
             L.circle([d.lat, d.lon], {
-                radius: d.radiusKm * 1000, color: '#142019', weight: 1.5, dashArray: '6 6', fillColor: '#142019', fillOpacity: .05
+                radius: d.radiusKm * 1000, color: '#FF5722', weight: 1.5, dashArray: '5 6', fillColor: '#FF5722', fillOpacity: .06
             }).addTo(lapisDesa);
             L.marker([d.lat, d.lon], {
                 interactive: false,
@@ -177,7 +197,7 @@
         });
     }
 
-    // ---------- Ringkasan ----------
+    // ---------- Ringkasan KPI ----------
     function renderRingkasan(r, tiket) {
         const bantuan = tiket.filter(butuhBantuan).length;
         const desa = new Set(tiket.map(t => t.desa)).size;
@@ -193,7 +213,7 @@
         $('kotak-eskalasi').classList.toggle('menyala', bantuan > 0);
     }
 
-    // ---------- Antrean ----------
+    // ---------- Antrean Tiket ----------
     let dipilih = null;
     let filter = 'semua';
     let tiketTerakhir = [];
@@ -202,7 +222,7 @@
         semua: () => true,
         aksi: perluTindakan,
         tangani: t => ['MenujuLokasi', 'Dicek', 'Penanganan'].includes(t.status),
-        pantau: t => t.status === 'Pemantauan'
+        pantau: t => t.status === 'Pemantauan' || t.status === 'Padam'
     };
 
     function urutPrioritas(a, b) {
@@ -212,7 +232,6 @@
 
     function flagTiket(t) {
         const f = [];
-        // Tiket Baru yang lewat batas sudah dijelaskan oleh jam SLA, jadi tidak perlu label lagi
         if (butuhBantuan(t) && !(t.eskalasiOtomatis && t.status === 'Baru')) {
             f.push(`<span class="flag merah">${t.eskalasiOtomatis ? 'Lewat batas 30 mnt' : 'Regu minta bantuan'}</span>`);
         }
@@ -238,9 +257,13 @@
 
     function renderDaftar() {
         const list = tiketTerakhir;
-        Object.keys(SARINGAN).forEach(k => { $('n-' + k).textContent = list.filter(SARINGAN[k]).length; });
+        Object.keys(SARINGAN).forEach(k => {
+            const elN = $('n-' + k);
+            if (elN) elN.textContent = list.filter(SARINGAN[k]).length;
+        });
 
         const el = $('daftar');
+        if (!el) return;
         const tampil = list.filter(SARINGAN[filter]).sort(urutPrioritas);
         if (!list.length) {
             el.innerHTML = '<p class="kosong">Belum ada tiket aktif. Satelit belum mendeteksi titik panas di wilayah regu. Untuk latihan, putar ulang data satelit tanggal sebelumnya dari bilah atas.</p>';
@@ -256,9 +279,15 @@
             <button class="tiket ${perluTindakan(t) ? 'genting' : ''}" data-id="${t.id}" style="--warna:${s.warna}">
                 <div class="baris">
                     <span class="judul"><span class="no">#${t.id}</span>${esc(t.desa)}</span>
-                    <span class="status-teks">${s.label}</span>
+                    <span class="status-badge ${s.badgeClass}">${s.label}</span>
                 </div>
-                <div class="meta">${esc(t.regu || 'Belum ada regu')}, ${angka(t.jarakKm)} km dari desa, dibuat ${sejak(t.dibuatUtc)}</div>
+                <div class="meta">
+                    <span class="meta-regu">${esc(t.regu || 'Belum ada regu')}</span>
+                    <span class="meta-sep">·</span>
+                    <span>${angka(t.jarakKm)} km dari desa</span>
+                    <span class="meta-sep">·</span>
+                    <span>${sejak(t.dibuatUtc)}</span>
+                </div>
                 ${jamSla(t)}
                 <div class="flags">${flagTiket(t)}</div>
             </button>`;
@@ -272,7 +301,7 @@
         renderDaftar();
     }));
 
-    // ---------- Detail tiket ----------
+    // ---------- Detail Tiket ----------
     function pilih(id) {
         dipilih = id;
         $('panel-daftar').hidden = true;
@@ -345,34 +374,40 @@
         $('panel-detail').innerHTML = `
             <div class="panel-head">
                 <div class="baris">
-                    <button class="kembali" id="btn-kembali">‹ Antrean tiket</button>
-                    <span class="status-teks" style="--warna:${statusInfo(t.status).warna}">${statusInfo(t.status).label}</span>
+                    <button class="kembali" id="btn-kembali">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        <span>Antrean tiket</span>
+                    </button>
+                    <span class="status-badge ${statusInfo(t.status).badgeClass}">${statusInfo(t.status).label}</span>
                 </div>
             </div>
             <div class="detail-isi">
-                <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="detail-header-card">
                     <h3 class="detail-judul">#${t.id} ${esc(t.desa)}</h3>
                     ${langkahHtml(t.status)}
                     ${jamSla(t)}
                     <div class="flags">${flagTiket(t)}</div>
                 </div>
-                <dl class="info">
-                    <div><dt>Regu</dt><dd>${esc(t.regu || '–')}</dd></div>
-                    <div><dt>Jarak dari desa</dt><dd>${angka(t.jarakKm)} km</dd></div>
-                    <div><dt>Terdeteksi satelit</dt><dd>${waktu(t.waktuDeteksiUtc)}</dd></div>
-                    <div><dt>Intensitas api (FRP)</dt><dd>${angka(t.frp)} MW</dd></div>
-                    <div><dt>Waktu respons regu</dt><dd>${respons == null ? 'Belum direspons' : respons + ' mnt'}</dd></div>
-                    <div><dt>Tiba di lokasi</dt><dd>${waktu(t.tibaUtc)}</dd></div>
-                    <div><dt>Dari deteksi sampai padam</dt><dd>${sampaiPadam == null ? '–' : sampaiPadam + ' mnt'}</dd></div>
-                    <div><dt>Luas terbakar</dt><dd>${t.luasTerbakarHa == null ? '–' : angka(t.luasTerbakarHa, 2) + ' ha'}</dd></div>
-                </dl>
-                <div class="aksi">
-                    ${bolehKirimBantuan ? `<button id="btn-bantuan">Kirim bantuan BPBD</button>` : ''}
-                    <button class="ghost" id="btn-fokus">Perbesar di peta</button>
+                <div class="info-grid">
+                    <div class="info-item"><dt>Regu Lapangan</dt><dd>${esc(t.regu || '–')}</dd></div>
+                    <div class="info-item"><dt>Jarak dari Desa</dt><dd>${angka(t.jarakKm)} km</dd></div>
+                    <div class="info-item"><dt>Deteksi Satelit</dt><dd>${waktu(t.waktuDeteksiUtc)}</dd></div>
+                    <div class="info-item"><dt>Intensitas Api (FRP)</dt><dd>${angka(t.frp)} MW</dd></div>
+                    <div class="info-item"><dt>Respons Regu</dt><dd>${respons == null ? 'Belum direspons' : respons + ' mnt'}</dd></div>
+                    <div class="info-item"><dt>Tiba di Lokasi</dt><dd>${waktu(t.tibaUtc)}</dd></div>
+                    <div class="info-item"><dt>Durasi s/d Padam</dt><dd>${sampaiPadam == null ? '–' : sampaiPadam + ' mnt'}</dd></div>
+                    <div class="info-item"><dt>Luas Terbakar</dt><dd>${t.luasTerbakarHa == null ? '–' : angka(t.luasTerbakarHa, 2) + ' ha'}</dd></div>
                 </div>
-                <div>
-                    <h2 style="margin-bottom:12px">Laporan lapangan</h2>
-                    <ul class="timeline">${linimasa}</ul>
+                <div class="aksi">
+                    ${bolehKirimBantuan ? `<button id="btn-bantuan" class="btn-primary">Kirim bantuan BPBD</button>` : ''}
+                    <button class="ghost" id="btn-fokus">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <span>Perbesar di peta</span>
+                    </button>
+                </div>
+                <div class="detail-laporan">
+                    <h2 class="subjudul-laporan">Laporan Lapangan</h2>
+                    <ul class="timeline">${linimasa || '<p class="kosong">Belum ada laporan dari lapangan.</p>'}</ul>
                 </div>
             </div>`;
 
@@ -396,13 +431,15 @@
         }
     }
 
-    // ---------- Muat data ----------
+    // ---------- Muat Data Keseluruhan ----------
     let sedangMuat = false;
     let idDikenal = null;
 
     function setLive(ok, teks) {
-        $('live').classList.toggle('putus', !ok);
-        $('live-teks').textContent = teks;
+        const el = $('live');
+        if (el) el.classList.toggle('putus', !ok);
+        const elT = $('live-teks');
+        if (elT) elT.textContent = teks;
     }
 
     async function muatSemua() {
@@ -414,7 +451,7 @@
                 api('/api/dashboard/peta?jam=48')
             ]);
 
-            // Beri tahu admin kalau ada tiket baru sejak refresh terakhir
+            // Beri tahu admin jika ada tiket baru sejak refresh terakhir
             if (idDikenal) {
                 const baru = dataPeta.tiket.filter(t => !idDikenal.has(t.id) && t.status === 'Baru');
                 if (baru.length === 1) toast(`Tiket baru #${baru[0].id} di ${baru[0].desa}. Regu sudah diberi tahu.`, 'alarm');
@@ -437,14 +474,14 @@
         }
     }
 
-    // ---------- Bilah atas ----------
+    // ---------- Bilah Atas ----------
     async function jalankan(tombol, path, pesanSukses) {
         tombol.disabled = true;
         try {
             const r = await api(path, { method: 'POST' });
             toast(pesanSukses(r));
             sudahDiposisikan = false;
-            idDikenal = null;   // tiket hasil putar ulang tidak perlu dimunculkan sebagai notifikasi satu per satu
+            idDikenal = null;
             await muatSemua();
         } catch (e) {
             toast(e.message, 'error');
@@ -453,32 +490,41 @@
         }
     }
 
-    $('btn-replay').addEventListener('click', (e) => {
+    $('btn-replay')?.addEventListener('click', (e) => {
         const tgl = $('tgl-replay').value;
         if (!tgl) { toast('Pilih tanggal yang mau diputar ulang.', 'error'); return; }
         jalankan(e.currentTarget, `/api/admin/firms/replay?tanggal=${tgl}`,
             r => `Data ${tgl} diputar: ${angka(r.baru, 0)} titik panas baru, ${angka(r.tiketDibuat, 0)} tiket dibuat.`);
     });
-    $('btn-tarik').addEventListener('click', (e) => {
+    $('btn-tarik')?.addEventListener('click', (e) => {
         jalankan(e.currentTarget, '/api/admin/firms/tarik',
             r => r.diterima === 0 ? 'Satelit belum mendeteksi titik panas baru di area pantauan.'
                                   : `${angka(r.baru, 0)} titik panas baru, ${angka(r.tiketDibuat, 0)} tiket dibuat.`);
     });
-    $('btn-keluar').addEventListener('click', keluar);
+    $('btn-keluar')?.addEventListener('click', keluar);
+
+    // Tombol Toggle Tema (Terang / Gelap)
+    $('btn-tema')?.addEventListener('click', () => {
+        const baru = temaAktif === 'dark' ? 'light' : 'dark';
+        terapkanTema(baru);
+    });
 
     function jalankanJam() {
-        $('jam').textContent = new Date().toLocaleTimeString('id-ID', {
-            timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit'
-        }) + ' WIB';
+        const elJam = $('jam');
+        if (elJam) {
+            elJam.textContent = new Date().toLocaleTimeString('id-ID', {
+                timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit'
+            }) + ' WIB';
+        }
     }
 
-    // ---------- Mulai ----------
+    // ---------- Inisialisasi ----------
     async function mulai() {
         if (!ambilToken()) { keluar(); return; }
         try {
             const saya = await api('/api/auth/saya');
             if (saya.role !== 'Admin') { keluar(); return; }
-            $('nama-admin').textContent = saya.namaLengkap;
+            if ($('nama-admin')) $('nama-admin').textContent = saya.namaLengkap;
         } catch {
             setLive(false, 'Server tidak bisa dihubungi');
             return;
@@ -487,9 +533,14 @@
         setInterval(jalankanJam, 30000);
         await muatSemua();
         setInterval(muatSemua, INTERVAL_REFRESH_MS);
-        // Jam SLA di antrean berjalan walau data belum berubah
-        setInterval(() => { if (!$('panel-daftar').hidden) renderDaftar(); }, 30000);
+        setInterval(() => { if ($('panel-daftar') && !$('panel-daftar').hidden) renderDaftar(); }, 30000);
     }
+
+    window.addEventListener('resize', () => {
+        if (typeof peta !== 'undefined' && peta) {
+            peta.invalidateSize();
+        }
+    });
 
     mulai();
 })();
