@@ -255,15 +255,18 @@ Semua endpoint tiket memakai header `Authorization: Bearer <token>`. Waktu dikir
 
 ## Penggunaan AI
 
-Sesuai ketentuan lomba, penggunaan AI dicantumkan secara terbuka. Detail lengkap ada di pitch deck.
+Sesuai ketentuan lomba, penggunaan AI dicantumkan secara terbuka. Detail lengkap ada di pitch deck dan Bab VII proposal.
 
 | Tools | Peran dalam pengembangan |
 |---|---|
-| Claude (Anthropic) | Brainstorming ide dan validasi masalah, penyusunan proses bisnis, pembuatan draf kode backend, dashboard, dan aplikasi mobile, debugging konfigurasi (Supabase, versi paket), penyusunan README dan pitch deck |
+| Claude (Anthropic) | Brainstorming ide dan validasi masalah, penyusunan proses bisnis, pembuatan draf kode backend, dashboard, dan aplikasi mobile, debugging konfigurasi (Supabase, versi paket, deploy), penyusunan README dan pitch deck, peninjauan struktur proposal |
+| Google Gemini | Alternatif nama produk, konsep logo dan palet warna, draf dan penyuntingan bahasa proposal |
 
 Semua kode hasil bantuan AI dijalankan, diuji, dan disesuaikan oleh tim. Keputusan produk (pemilihan masalah, wilayah, alur, dan prioritas fitur) dibuat oleh tim.
 
 ## Tim
+
+**Tim Lupa Cara Ngoding**, Politeknik Astra
 
 | Nama | Peran |
 |---|---|
