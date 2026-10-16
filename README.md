@@ -262,7 +262,6 @@ Sesuai ketentuan lomba, penggunaan AI dicantumkan secara terbuka. Detail lengkap
 | Claude (Anthropic) | Brainstorming ide dan validasi masalah, penyusunan proses bisnis, pembuatan draf kode backend, dashboard, dan aplikasi mobile, debugging konfigurasi (Supabase, versi paket, deploy), penyusunan README dan pitch deck, peninjauan struktur proposal |
 | Google Gemini | Alternatif nama produk, konsep logo dan palet warna, draf dan penyuntingan bahasa proposal |
 
-Semua kode hasil bantuan AI dijalankan, diuji, dan disesuaikan oleh tim. Keputusan produk (pemilihan masalah, wilayah, alur, dan prioritas fitur) dibuat oleh tim.
 
 ## Tim
 
@@ -270,7 +269,7 @@ Semua kode hasil bantuan AI dijalankan, diuji, dan disesuaikan oleh tim. Keputus
 
 | Nama | Peran |
 |---|---|
-| _isi nama_ | Backend |
-| _isi nama_ | Mobile |
-| _isi nama_ | Web dashboard |
-| _isi nama_ | Produk, proposal, pitch |
+| _Aryasatya Jovan Lateef_ | Backend |
+| _Yuwan Yoga Pratama_ | Mobile |
+| _Deni Handika Shaputra_ | Web dashboard |
+| _Alvaro Naufal Saksono_ | Produk, proposal, pitch |
