@@ -120,6 +120,47 @@ export function kirimUpdate(id, f) {
   tambah('UkuranApi', f.ukuranApi);
   tambah('ArahSebaran', f.arahSebaran);
   tambah('Catatan', f.catatan);
-  // Content-Type multipart diisi otomatis oleh fetch (jangan diset manual)
-  return request(`/api/tiket/${id}/update`, { method: 'POST', body: fd });
+  return kirimMultipart(`/api/tiket/${id}/update`, fd);
+}
+
+/**
+ * Upload multipart lewat XMLHttpRequest, bukan fetch.
+ * fetch bawaan Expo versi baru tidak bisa mengirim file dalam bentuk { uri, name, type }
+ * dan langsung gagal sebelum sampai ke server ("Tidak bisa terhubung ke server").
+ * XMLHttpRequest milik React Native mendukung bentuk itu sejak lama.
+ */
+function kirimMultipart(path, fd) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', baseUrl + path);
+    xhr.timeout = 60000; // foto bisa beberapa MB, beri waktu lebih lama
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    // Content-Type multipart (dengan boundary) diisi otomatis, jangan diset manual
+
+    xhr.onload = () => {
+      let data = null;
+      try { data = xhr.responseText ? JSON.parse(xhr.responseText) : null; } catch { /* bukan JSON */ }
+      if (xhr.status === 401) {
+        saatSesiHabis();
+        const err = new Error('Sesi habis, silakan masuk lagi.');
+        err.code = 401;
+        reject(err);
+        return;
+      }
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(new Error(data?.pesan
+          || (xhr.status === 403 ? 'Tiket ini bukan milik regu Anda.'
+            : xhr.status === 413 ? 'Foto terlalu besar. Ambil ulang foto.'
+              : xhr.status >= 500 ? 'Server sedang bermasalah. Coba lagi sebentar.'
+                : `Permintaan gagal (HTTP ${xhr.status}).`)));
+        return;
+      }
+      resolve(data);
+    };
+    xhr.onerror = () => reject(new Error('Tidak bisa terhubung ke server. Cek sinyal internet dan URL server.'));
+    xhr.ontimeout = () => reject(new Error('Upload terlalu lama. Cek sinyal lalu coba lagi.'));
+    xhr.send(fd);
+  });
 }

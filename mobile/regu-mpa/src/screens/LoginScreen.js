@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import * as api from '../api';
 import { warna } from '../theme';
-import { Tombol } from '../ui';
+import { IkonMata, Tombol } from '../ui';
 
 export default function LoginScreen({ onMasuk }) {
   const [username, setUsername] = useState('');
@@ -75,7 +75,7 @@ export default function LoginScreen({ onMasuk }) {
               accessibilityRole="button"
               accessibilityLabel={lihatPw ? 'Sembunyikan password' : 'Lihat password'}
             >
-              <Text style={s.pwToggleTeks}>{lihatPw ? 'Sembunyikan' : 'Lihat'}</Text>
+              <IkonMata coret={lihatPw} />
             </Pressable>
           </View>
 
@@ -117,9 +117,8 @@ const s = StyleSheet.create({
     paddingVertical: 11, fontSize: 16, color: warna.text, backgroundColor: warna.surface2,
   },
   pwWrap: { justifyContent: 'center' },
-  pwInput: { paddingRight: 110 },
-  pwToggle: { position: 'absolute', right: 6, paddingHorizontal: 10, paddingVertical: 8 },
-  pwToggleTeks: { color: warna.info, fontSize: 14, fontWeight: '700' },
+  pwInput: { paddingRight: 52 },
+  pwToggle: { position: 'absolute', right: 4, padding: 10 },
   linkServer: { color: warna.info, fontSize: 14, marginTop: 14, fontWeight: '600' },
   error: { color: warna.bahaya, fontSize: 14, marginTop: 12 },
 });

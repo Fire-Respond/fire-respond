@@ -51,6 +51,21 @@ export function Progres({ status }) {
   );
 }
 
+/**
+ * Ikon mata digambar dari View biasa, jadi tidak perlu paket ikon tambahan.
+ * coret = true menampilkan mata tercoret (password sedang terlihat, ketuk untuk menyembunyikan).
+ */
+export function IkonMata({ coret, warnaIkon = warna.muted }) {
+  return (
+    <View style={s.mataKotak}>
+      <View style={[s.mataLuar, { borderColor: warnaIkon }]}>
+        <View style={[s.mataPupil, { backgroundColor: warnaIkon }]} />
+      </View>
+      {coret && <View style={[s.mataCoret, { backgroundColor: warnaIkon }]} />}
+    </View>
+  );
+}
+
 export function Tombol({ label, onPress, jenis = 'utama', disabled, sibuk, style }) {
   const gaya = {
     utama: { bg: warna.accent, fg: '#fff', border: warna.accent },
@@ -126,6 +141,15 @@ const s = StyleSheet.create({
   progres: { flexDirection: 'row', gap: 3 },
   progresGaris: { height: 5, borderRadius: 99, backgroundColor: warna.border },
   progresLabel: { fontSize: 11, color: warna.muted, marginTop: 4 },
+  mataKotak: { width: 26, height: 26, alignItems: 'center', justifyContent: 'center' },
+  mataLuar: {
+    width: 22, height: 14, borderWidth: 2, borderTopLeftRadius: 14, borderTopRightRadius: 14,
+    borderBottomLeftRadius: 14, borderBottomRightRadius: 14, alignItems: 'center', justifyContent: 'center',
+  },
+  mataPupil: { width: 6, height: 6, borderRadius: 3 },
+  mataCoret: {
+    position: 'absolute', width: 26, height: 2, borderRadius: 1, transform: [{ rotate: '-45deg' }],
+  },
   tombol: {
     minHeight: 50, borderRadius: 10, borderWidth: 1, paddingHorizontal: 16,
     alignItems: 'center', justifyContent: 'center',
