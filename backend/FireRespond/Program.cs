@@ -25,7 +25,7 @@ builder.Services.AddDataProtection();
 builder.Services.AddSingleton<TokenService>();
 
 builder.Services.Configure<FirmsOptions>(builder.Configuration.GetSection("Firms"));
-builder.Services.AddHttpClient<FirmsService>(c => c.Timeout = TimeSpan.FromSeconds(60));
+builder.Services.AddHttpClient<FirmsService>(c => c.Timeout = TimeSpan.FromSeconds(120));
 builder.Services.AddHostedService<FirmsWorker>();
 builder.Services.AddHttpClient<NominatimService>(c =>
 {

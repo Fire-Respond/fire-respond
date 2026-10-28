@@ -28,22 +28,30 @@ public class FirmsWorker : BackgroundService
 
         do
         {
-            try
-            {
-                using var scope = _scopes.CreateScope();
-                var firms = scope.ServiceProvider.GetRequiredService<FirmsService>();
+            using var scope = _scopes.CreateScope();
+            var firms = scope.ServiceProvider.GetRequiredService<FirmsService>();
 
-                if (DateTime.UtcNow >= tarikBerikutnya)
+            if (DateTime.UtcNow >= tarikBerikutnya)
+            {
+                try
                 {
                     await firms.TarikDanProsesAsync(null, ct);
                     tarikBerikutnya = DateTime.UtcNow.AddMinutes(_opt.IntervalMenit);
                 }
+                catch (Exception ex) when (!ct.IsCancellationRequested)
+                {
+                    _log.LogError(ex, "Gagal menarik data FIRMS, coba lagi 2 menit lagi");
+                    tarikBerikutnya = DateTime.UtcNow.AddMinutes(2);
+                }
+            }
+
+            try
+            {
                 await firms.JalankanAturanAsync(ct);
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch (Exception ex) when (!ct.IsCancellationRequested)
             {
-                // Jangan sampai worker mati cuma karena internet putus sebentar
-                _log.LogError(ex, "Gagal memproses data FIRMS");
+                _log.LogError(ex, "Gagal menjalankan aturan SLA");
             }
         } while (await timer.WaitForNextTickAsync(ct));
     }
